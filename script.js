@@ -1,3 +1,101 @@
+class VectorPhy {
+	constructor(x, y) {
+		this.x = x || 0;
+		this.y = y || 0;
+	}
+	static applyForce(force, m) {
+		return Vector2D.div(force, m);
+	}
+	static seperation(from, p) {
+		//'from' is an array.. need to define p.dis in class
+		//p.dis is the distance
+		let sum = new Vector2D(), steer = new Vector2D();
+		let count = 0;
+
+		for (var i = 0; i < from.length; i++) {
+			//console.log(from.length)
+			if (from[i] == p) continue;
+
+			let d = Vector2D.distance(p.pos, from[i].pos);
+			if (d < p.dis+(p.r*2) && d > 0) {
+				let diff = Vector2D.sub(p.pos, from[i].pos);
+				diff = Vector2D.normalize(diff);
+
+				sum = Vector2D.add(diff, sum);
+				count++;
+			}
+		}
+		if (count > 0) {
+			//console.log(1)
+			let desired = Vector2D.div(sum, count);
+			desired = Vector2D.setMag(p.maxSpd, desired);
+			steer = Vector2D.sub(desired, p.vel);
+			
+		}
+		steer = Vector2D.limit(p.maxForce, steer);
+		//console.log(from.length);
+		return VectorPhy.applyForce(steer, p.m);
+	}
+	static align(from, p) {
+		//or attraction
+		//from is store array.. need to define p.dis in class
+		let sum = new Vector2D(), steer = new Vector2D();
+		let count = 0;
+
+		for (var i = 0; i < from.length; i++) {
+			//console.log(from.length)
+			if (from[i] == p) continue;
+
+			let d = Vector2D.distance(p.pos, from[i].pos);
+			if (d < p.adis+p.r && d > 0) {
+				sum = Vector2D.add(from[i].vel, sum);
+				count++;
+			}
+		}
+		if (count > 0) {
+			//console.log(1)
+			let desired = Vector2D.div(sum, count);
+			desired = Vector2D.setMag(p.maxSpd, desired);
+			steer = Vector2D.sub(desired, p.vel);
+			
+		}
+		steer = Vector2D.limit(p.maxForce, steer);
+		return VectorPhy.applyForce(steer, p.m);
+	}
+	static cohesion(from, p) {
+		//or attraction
+		//from is store array.. need to define p.dis in class
+		let sum = new Vector2D(), steer = new Vector2D();
+		let count = 0;
+
+		for (var i = 0; i < from.length; i++) {
+			//console.log(from.length)
+			if (from[i] == p) continue;
+
+			let d = Vector2D.distance(p.pos, from[i].pos);
+			if (d < p.cdis+p.r && d > 0) {
+				//let diff = Vector2D.sub(from[i].pos, p.pos);
+				//diff = Vector2D.normalize(diff);
+
+				sum = Vector2D.add(from[i].pos, sum);
+				count++;
+			}
+		}
+		if (count > 0) {
+			//console.log(1)
+			let desired = Vector2D.div(sum, count);
+			desired = Vector2D.setMag(p.maxSpd, desired);
+			steer = Vector2D.sub(desired, p.vel);
+			
+		}
+		steer = Vector2D.limit(p.maxForce, steer);
+		return VectorPhy.applyForce(steer, p.m);
+	}
+}
+
+
+
+
 var canvas = document.querySelector('#canvas');
 var ctx = canvas.getContext('2d');
 canvas.width = innerWidth;
