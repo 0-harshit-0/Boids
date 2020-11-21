@@ -2,3 +2,6 @@ body{
 	overflow: hidden;
 	margin: 0px;
 }
+canvas{
+	background: black;
+}
