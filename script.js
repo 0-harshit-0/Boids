@@ -127,7 +127,7 @@ class Particle {
 	}
 	draw(angle) {
 		s.eqTri(this.r, this.pos.x, this.pos.y, angle);
-		s.stroke();
+		s.stroke('white');
 	}
 	corner() {
 		if (this.pos.x > canvas.width) {
