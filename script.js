@@ -3,7 +3,7 @@ class VectorPhy {
 		this.x = x || 0;
 		this.y = y || 0;
 	}
-	static applyForce(force, m) {
+	static applyForce(force, m = 1) {
 		return Vector2D.div(force, m);
 	}
 	static repel(from, p) {
@@ -185,12 +185,12 @@ class Particle {
 		this.acc = new Vector2D();
 		this.m = 1;
 		this.maxSpd = 10;
-		this.maxForce = 0.21;
+		this.maxForce = 0.051;
 
 		this.dis = 30;
 		this.cdis = 50;
 		this.adis = 50;
-		this.r = this.m*3;
+		this.r = this.m*4;
 
 		this.theta = 0;
 	}
@@ -198,17 +198,31 @@ class Particle {
 		s.eqTri(this.r, this.pos.x, this.pos.y, angle);
 		s.stroke('white');
 	}
-	
+	corner() {
+		if (this.pos.x > canvas.width-1) {
+			this.pos.x = 1;
+		}
+		if (this.pos.y > canvas.height-1) {
+			this.pos.y = 1;
+		}
+		if (this.pos.y < 0) {
+			this.pos.y = canvas.height-2;
+		}
+		if (this.pos.x < 0) {
+			this.pos.x = canvas.width-2;
+		}
+	}
 	update1() {
-		//this.corner();
+		
 		this.draw(this.theta);
+
 		this.acc = VectorPhy.seperation(man2, this);
 		this.acc = Vector2D.add(this.acc, VectorPhy.align(man2, this));
 		this.acc = Vector2D.add(this.acc, VectorPhy.cohesion(man2, this));
 		obstacle.forEach(z => {
 			this.acc = Vector2D.add(this.acc, z.seperation1(this));
 		});
-
+		this.corner();
 		this.vel = Vector2D.add(this.acc, this.vel);
 		this.vel = Vector2D.limit(2, this.vel);
 		this.pos = Vector2D.add(this.vel, this.pos);
