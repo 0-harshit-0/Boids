@@ -128,9 +128,10 @@ class Obstacles {
 		this.pos = new Vector2D(x, y);
 		this.dis = 10;
 		this.maxForce = 0.71;
+		this.r = 5;
 	}
 	draw() {
-		s.circle(this.pos.x, this.pos.y);
+		s.circle(this.pos.x, this.pos.y, this.r);
 		s.fill('red');
 	}
 	repel(p) {
@@ -189,7 +190,7 @@ class Particle {
 		this.dis = 30;
 		this.cdis = 50;
 		this.adis = 50;
-		this.r = this.m*10;
+		this.r = this.m*3;
 
 		this.theta = 0;
 	}
@@ -209,7 +210,7 @@ class Particle {
 		});
 
 		this.vel = Vector2D.add(this.acc, this.vel);
-		this.vel = Vector2D.limit(3, this.vel);
+		this.vel = Vector2D.limit(2, this.vel);
 		this.pos = Vector2D.add(this.vel, this.pos);
 
 		this.acc = 0;
@@ -220,7 +221,7 @@ class Particle {
 
 
 (()=>{
-	for (var i = 0; i < 100; i++) {
+	for (var i = 0; i < 200; i++) {
 		man2.push(new Particle(Math.random()*200, Math.random()*200));
 	}
 	
@@ -232,9 +233,9 @@ addEventListener('click', (e)=> {
 });
 addEventListener('keypress', (e) => {
 	if (e.key == 'a') {
-		for (var i = 0; i < 100; i++) {
-		man2.push(new Particle(Math.random()*200, Math.random()*200));
-	}
+		for (var i = 0; i < 200; i++) {
+			man2.push(new Particle(Math.random()*200, Math.random()*200));
+		}
 	}
 });
 (function animation() {
@@ -243,7 +244,15 @@ addEventListener('keypress', (e) => {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	man2.forEach(x=>{
 		x.update1();
+		if (x.pos.x > canvas.width || x.pos.y > canvas.height || x.pos.x < -1 || x.pos.y < -1) {
+			man2.splice(man2.indexOf(x), 1);
+		}
 	});
+	if (!man2.length) {
+		for (var i = 0; i < 200; i++) {
+			man2.push(new Particle(Math.random()*200, Math.random()*200));
+		}
+	}
 	obstacle.forEach(z => {
 		z.draw();
 	});
